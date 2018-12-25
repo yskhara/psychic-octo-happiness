@@ -44,6 +44,26 @@ int main(int argc, char *argv[])
         std::cout << "connected" << std::endl;
     }
 
+
+    const std::string msg = "127.0.0.1,31402,user_a";
+    //boost::system::error_code error;
+    asio::write(socket, asio::buffer(msg), error);
+
+	// receive data
+	asio::streambuf receive_buffer;
+	asio::read(socket, receive_buffer, asio::transfer_at_least(3), error);
+
+	if (error && error != asio::error::eof) {
+		std::cout << "receive failed: " << error.message() << std::endl;
+
+		return -1;
+	}
+
+	std::string received_msg = asio::buffer_cast<const char*>(receive_buffer.data());
+	std::cout << received_msg << std::endl;
+
+    exit(0);
+
     /*
      *  入力されたデータをソケットに書き込んでサーバーに送り、
      *  サーバーが変換して送ってきたデータを読み込む。
